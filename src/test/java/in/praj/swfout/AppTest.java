@@ -20,8 +20,26 @@ public class AppTest {
     }
 
     @Test
+    public void testParseFailureOnZeroArgs() {
+        Assert.assertThrows(
+                "Should fail on zero CLI arguments",
+                ParseException.class,
+                () -> app.parse(new String[0]));
+    }
+
+    @Test
     public void testParseFailureOnNonexistentFile() {
-        Assert.assertThrows(FileNotFoundException.class,
-                () -> app.parse(new String[] {"nonexistent.exe"}));
+        Assert.assertThrows(
+                "Should fail when given nonexistent file",
+                ParseException.class,
+                () -> app.parse(new String[] {"missing.exe"}));
+    }
+
+    @Test
+    public void testParseFailureOnPermissionError() {
+        Assert.assertThrows(
+                "Should fail when given non-permitted file",
+                ParseException.class,
+                () -> app.parse(new String[] {"dont-read.exe"}));
     }
 }
