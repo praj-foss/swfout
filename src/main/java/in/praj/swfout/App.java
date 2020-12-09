@@ -6,9 +6,12 @@
 package in.praj.swfout;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.RandomAccessFile;
 
 public class App {
+    private static final int SIGNATURE = Integer.parseUnsignedInt("563412FF", 16);
+
     RandomAccessFile parse(String[] args) throws ParseException {
         if (args.length == 0) {
             throw new ParseException("Missing filename");
@@ -21,5 +24,13 @@ public class App {
         } catch (SecurityException e) {
             throw new ParseException("Permission denied for reading file");
         }
+    }
+
+    boolean isFileLargeEnough(RandomAccessFile file) throws IOException {
+        return file.length() > 8;
+    }
+
+    boolean isSignatureValid(int bytes) {
+        return Integer.compareUnsigned(bytes, SIGNATURE) == 0;
     }
 }
