@@ -33,4 +33,12 @@ public class App {
     boolean isSignatureValid(int bytes) {
         return Integer.compareUnsigned(bytes, SIGNATURE) == 0;
     }
+
+    long readSwfSize(RandomAccessFile file) throws IOException {
+        file.seek(file.length() - 8);
+        if (isSignatureValid(file.readInt())) {
+            return file.readInt();
+        }
+        throw new RuntimeException("File signature is invalid");
+    }
 }
