@@ -5,25 +5,17 @@
 
 package in.praj.swfout;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
 public class App {
     private static final int SIGNATURE = Integer.parseUnsignedInt("563412FF", 16);
 
-    RandomAccessFile parse(String[] args) throws ParseException {
+    String parse(String[] args) {
         if (args.length == 0) {
-            throw new ParseException("Missing filename");
+            throw new RuntimeException("Missing input file");
         }
-
-        try {
-            return new RandomAccessFile(args[0], "r");
-        } catch (FileNotFoundException e) {
-            throw new ParseException("File does not exist");
-        } catch (SecurityException e) {
-            throw new ParseException("Permission denied for reading file");
-        }
+        return args[0];
     }
 
     boolean isFileLargeEnough(RandomAccessFile file) throws IOException {

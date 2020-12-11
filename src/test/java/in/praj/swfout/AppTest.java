@@ -26,19 +26,17 @@ public class AppTest {
     public TemporaryFolder temp = new TemporaryFolder();
 
     @Test
-    public void testParseFailureOnZeroArgs() {
+    public void testParsingZeroCLIArgs() {
         Assert.assertThrows(
                 "Should fail on zero CLI arguments",
-                ParseException.class,
+                RuntimeException.class,
                 () -> app.parse(new String[0]));
     }
 
     @Test
-    public void testParseFailureOnNonexistentFile() {
-        Assert.assertThrows(
-                "Should fail when given nonexistent file",
-                ParseException.class,
-                () -> app.parse(new String[] {"missing.exe"}));
+    public void testParsingValidCLIArgs() {
+        var args = new String[] {"game.exe"};
+        Assert.assertEquals("game.exe", app.parse(args));
     }
 
     @Test
