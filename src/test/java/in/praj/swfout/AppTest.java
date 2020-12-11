@@ -40,6 +40,14 @@ public class AppTest {
     }
 
     @Test
+    public void testMissingInputFile() {
+        Assert.assertThrows(
+                "Should fail when input file is missing",
+                RuntimeException.class,
+                () -> app.prepareInputFile("missing.exe"));
+    }
+
+    @Test
     public void testFileTooSmall() throws IOException {
         try (var empty = new RandomAccessFile(temp.newFile(), "r")) {
             Assert.assertFalse(
