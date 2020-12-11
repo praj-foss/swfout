@@ -45,6 +45,7 @@ public class AppTest {
                 "Should fail when input file is missing",
                 RuntimeException.class,
                 () -> app.prepareInputFile("missing.exe"));
+        Assert.assertNull(app.getInputFile());
     }
 
     @Test
@@ -58,6 +59,19 @@ public class AppTest {
                 "Should fail when input file is not greater than 8 bytes",
                 RuntimeException.class,
                 () -> app.prepareInputFile(small.getPath()));
+        Assert.assertNull(app.getInputFile());
+    }
+
+    @Test
+    public void testFileLargeEnough() throws IOException {
+        var okay = temp.newFile();
+        try (var file = new RandomAccessFile(okay, "rw")) {
+            file.writeLong(Long.MAX_VALUE);
+            file.writeInt(Integer.MAX_VALUE);
+        }
+
+        app.prepareInputFile(okay.getPath());
+        Assert.assertNotNull(app.getInputFile());
     }
 
     @Test

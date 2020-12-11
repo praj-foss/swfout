@@ -29,7 +29,7 @@ public class App {
         }
 
         try {
-            input = new RandomAccessFile(exe, "r");
+            setInputFile(new RandomAccessFile(exe, "r"));
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage());
         }
@@ -45,5 +45,13 @@ public class App {
             return file.readInt();
         }
         throw new RuntimeException("File signature is invalid");
+    }
+
+    public RandomAccessFile getInputFile() {
+        return input;
+    }
+
+    public void setInputFile(RandomAccessFile input) {
+        this.input = input;
     }
 }
