@@ -5,7 +5,7 @@
 
 package in.praj.swfout;
 
-import java.io.FileNotFoundException;
+import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
@@ -21,15 +21,18 @@ public class App {
     }
 
     void prepareInputFile(String path) {
-        try {
-            input = new RandomAccessFile(path, "r");
-        } catch (FileNotFoundException e) {
+        File exe = new File(path);
+        if (! exe.exists()) {
             throw new RuntimeException("Input file is missing");
+        } else if (exe.length() <= 8) {
+            throw new RuntimeException("Invalid file format");
         }
-    }
 
-    boolean isFileLargeEnough(RandomAccessFile file) throws IOException {
-        return file.length() > 8;
+        try {
+            input = new RandomAccessFile(exe, "r");
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     boolean isSignatureValid(int bytes) {

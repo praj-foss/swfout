@@ -49,11 +49,15 @@ public class AppTest {
 
     @Test
     public void testFileTooSmall() throws IOException {
-        try (var empty = new RandomAccessFile(temp.newFile(), "r")) {
-            Assert.assertFalse(
-                    "Should fail when input file is not greater than 8 bytes",
-                    app.isFileLargeEnough(empty));
+        var small = temp.newFile();
+        try (var file = new RandomAccessFile(small, "rw")) {
+            file.writeLong(Long.MAX_VALUE);
         }
+
+        Assert.assertThrows(
+                "Should fail when input file is not greater than 8 bytes",
+                RuntimeException.class,
+                () -> app.prepareInputFile(small.getPath()));
     }
 
     @Test
