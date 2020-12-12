@@ -97,4 +97,12 @@ public class AppTest {
                     file.getFilePointer());
         }
     }
+
+    @Test
+    public void testAppExit() throws IOException {
+        var file = new RandomAccessFile(temp.newFile(), "r");
+        app.setInputFile(file);
+        app.exit();
+        Assert.assertFalse(file.getChannel().isOpen());
+    }
 }

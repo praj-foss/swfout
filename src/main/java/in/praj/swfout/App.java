@@ -47,11 +47,34 @@ public class App {
         throw new RuntimeException("File signature is invalid");
     }
 
+    void exit() {
+        try {
+            if (input != null)
+                input.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
     public RandomAccessFile getInputFile() {
         return input;
     }
 
     public void setInputFile(RandomAccessFile input) {
         this.input = input;
+    }
+
+    public static void main(String[] args) {
+        var app = new App();
+        try {
+            var exe = app.parse(args);
+            app.prepareInputFile(exe);
+
+            // TODO: Fill up
+        } catch (RuntimeException e) {
+            System.out.println("Error: " + e.getMessage());
+        } finally {
+            app.exit();
+        }
     }
 }
