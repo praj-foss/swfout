@@ -36,7 +36,8 @@ public class AppTest {
     @Test
     public void testParsingValidCLIArgs() {
         var args = new String[] {"game.exe"};
-        Assert.assertEquals("game.exe", app.parse(args));
+        var options = app.parse(args);
+        Assert.assertEquals("game.exe", options.getInputPath());
     }
 
     @Test
@@ -44,7 +45,7 @@ public class AppTest {
         Assert.assertThrows(
                 "Should fail when input file is missing",
                 RuntimeException.class,
-                () -> app.prepareInputFile("missing.exe"));
+                () -> app.prepareInputFile(new Options("missing.exe", null)));
         Assert.assertNull(app.getInputFile());
     }
 
@@ -58,7 +59,7 @@ public class AppTest {
         Assert.assertThrows(
                 "Should fail when input file is not greater than 8 bytes",
                 RuntimeException.class,
-                () -> app.prepareInputFile(small.getPath()));
+                () -> app.prepareInputFile(new Options(small.getPath(), null)));
         Assert.assertNull(app.getInputFile());
     }
 
@@ -69,8 +70,8 @@ public class AppTest {
             file.writeLong(Long.MAX_VALUE);
             file.writeInt(Integer.MAX_VALUE);
         }
-
-        app.prepareInputFile(okay.getPath());
+        
+        app.prepareInputFile(new Options(okay.getPath(), null));
         Assert.assertNotNull(app.getInputFile());
     }
 

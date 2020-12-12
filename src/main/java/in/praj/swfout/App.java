@@ -13,15 +13,15 @@ public class App {
     private static final int SIGNATURE = Integer.parseUnsignedInt("563412FF", 16);
     private RandomAccessFile input;
 
-    String parse(String[] args) {
+    Options parse(String[] args) {
         if (args.length == 0) {
             throw new RuntimeException("Missing input file");
         }
-        return args[0];
+        return new Options(args[0], null);
     }
 
-    void prepareInputFile(String path) {
-        File exe = new File(path);
+    void prepareInputFile(Options options) {
+        File exe = new File(options.getInputPath());
         if (! exe.exists()) {
             throw new RuntimeException("Input file is missing");
         } else if (exe.length() <= 8) {
