@@ -35,6 +35,25 @@ public class App {
         }
     }
 
+    void extractSwf(Options options) {
+        try (var output = new RandomAccessFile(options.getOutputPath(), "rw")) {
+            var swfLength = readSwfSize(input);
+            input.seek(0);
+            var position = input.length() - swfLength - 8;
+            var remaining = swfLength;
+            var inChan = input.getChannel();
+            var outChan = output.getChannel();
+
+            while (remaining > 0) {
+                long sent = inChan.transferTo(position, remaining, outChan);
+                remaining -= sent;
+                position += sent;
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
     boolean isSignatureValid(int bytes) {
         return Integer.compareUnsigned(bytes, SIGNATURE) == 0;
     }

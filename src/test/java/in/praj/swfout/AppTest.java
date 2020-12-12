@@ -70,7 +70,7 @@ public class AppTest {
             file.writeLong(Long.MAX_VALUE);
             file.writeInt(Integer.MAX_VALUE);
         }
-        
+
         app.prepareInputFile(new Options(okay.getPath(), null));
         Assert.assertNotNull(app.getInputFile());
     }
@@ -96,6 +96,30 @@ public class AppTest {
                     "File pointer should reach EOF after reading SWF size",
                     file.length(),
                     file.getFilePointer());
+        }
+    }
+
+    @Test
+    public void testExtractingSwf() throws IOException {
+        var exe = temp.newFile();
+        var swf = temp.newFile();
+        var opts = new Options(exe.getPath(), swf.getPath());
+        var target = "EMBEDDED SWF";
+        swf.delete();
+
+        try (var input = new RandomAccessFile(exe, "rw")) {
+            input.writeBytes("PROJECTOR");
+            input.writeBytes(target);
+            input.writeInt(Integer.parseUnsignedInt("563412FF", 16));
+            input.writeInt(target.length());
+        }
+
+        app.prepareInputFile(opts);
+        app.extractSwf(opts);
+        app.exit();
+
+        try (var output = new RandomAccessFile(swf, "r")) {
+            Assert.assertEquals(target, output.readLine());
         }
     }
 
