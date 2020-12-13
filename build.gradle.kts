@@ -3,6 +3,9 @@ plugins {
     application
 }
 
+group   = "in.praj.swfout"
+version = "0.1.0"
+
 repositories {
     jcenter()
 }
