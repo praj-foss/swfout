@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 
 public class App {
-    private static final int SIGNATURE = Integer.parseUnsignedInt("563412FF", 16);
+    private static final int SIGNATURE = Integer.parseUnsignedInt("563412FA", 16);
     private RandomAccessFile input;
 
     Options parse(String[] args) {
@@ -37,10 +37,8 @@ public class App {
 
     void extractSwf(Options options) {
         try (var output = new RandomAccessFile(options.getOutputPath(), "rw")) {
-            var swfLength = readSwfSize(input);
-            input.seek(0);
-            var position = input.length() - swfLength - 8;
-            var remaining = swfLength;
+            var remaining = readSwfSize(input);
+            var position = input.length() - remaining - 8;
             var inChan = input.getChannel();
             var outChan = output.getChannel();
 
@@ -61,7 +59,9 @@ public class App {
     long readSwfSize(RandomAccessFile file) throws IOException {
         file.seek(file.length() - 8);
         if (isSignatureValid(file.readInt())) {
-            return file.readInt();
+            var bytes = file.readInt();
+            file.seek(0);
+            return Integer.reverseBytes(bytes);
         }
         throw new RuntimeException("File signature is invalid");
     }

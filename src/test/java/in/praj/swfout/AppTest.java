@@ -16,6 +16,7 @@ import java.io.RandomAccessFile;
 
 public class AppTest {
     private App app;
+    private static final String SIGNATURE = "563412FA";
 
     @Before
     public void resetApp() {
@@ -77,25 +78,22 @@ public class AppTest {
 
     @Test
     public void testValidSignature() {
-        var valid = Integer.parseUnsignedInt("563412FF", 16);
+        var valid = Integer.parseUnsignedInt(SIGNATURE, 16);
         Assert.assertTrue(app.isSignatureValid(valid));
     }
 
     @Test
     public void testReadingSwfSize() throws IOException {
         var exe = temp.newFile();
-        var size = "2B920500";
+        var size   = "2B920500";
+        var sizeLE = "0005922B";
         var sizeLong = Long.parseLong(size, 16);
 
         try (var file = new RandomAccessFile(exe, "rw")) {
             file.writeInt(0);
-            file.writeLong(Long.parseUnsignedLong("563412FF" + size, 16));
+            file.writeLong(Long.parseUnsignedLong(SIGNATURE + sizeLE, 16));
 
             Assert.assertEquals(0, Long.compareUnsigned(sizeLong, app.readSwfSize(file)));
-            Assert.assertEquals(
-                    "File pointer should reach EOF after reading SWF size",
-                    file.length(),
-                    file.getFilePointer());
         }
     }
 
@@ -110,8 +108,8 @@ public class AppTest {
         try (var input = new RandomAccessFile(exe, "rw")) {
             input.writeBytes("PROJECTOR");
             input.writeBytes(target);
-            input.writeInt(Integer.parseUnsignedInt("563412FF", 16));
-            input.writeInt(target.length());
+            input.writeInt(Integer.parseUnsignedInt(SIGNATURE, 16));
+            input.writeInt(Integer.reverseBytes(target.length()));
         }
 
         app.prepareInputFile(opts);
